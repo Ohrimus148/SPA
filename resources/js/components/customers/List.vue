@@ -8,7 +8,7 @@
             <th>Name</th>
             <th>Email</th>
             <!--<th>Phone</th>-->
-            <th>Actions</th>
+            <th class="actions">Actions</th>
             </thead>
             <tbody>
             <template v-if="!customers.length">
@@ -21,8 +21,10 @@
                     <td>{{ customer.first_name }}</td>
                     <td>{{ customer.email }}</td>
                     <!--<td>{{ customer.phone }}</td>-->
-                    <td>
-                        <router-link :to="`/customers/${customer.id}`">View</router-link>
+                    <td class="actions">
+                        <router-link :to="`/customers/${customer.id}`" ><span class="fa fa-eye"></span></router-link>
+                        <router-link :to="`/customers/edit/${customer.id}`" ><span class="fa fa-pencil"></span></router-link>
+                        <router-link :to="`/customers/delete/${customer.id}`" ><span class="fa fa-trash"></span></router-link>
                     </td>
                 </tr>
             </template>
@@ -35,11 +37,9 @@
     export default {
         name: 'list',
         mounted() {
-            console.log('hi',this.customers);
             if (this.customers.length) {
                 return;
             }
-
             this.$store.dispatch('getCustomers');
         },
         computed: {
@@ -54,5 +54,11 @@
     .btn-wrapper {
         text-align: right;
         margin-bottom: 20px;
+    }
+    .fa-trash{
+        color: red;
+    }
+    .fa-pencil{
+        color: #e0a800;
     }
 </style>

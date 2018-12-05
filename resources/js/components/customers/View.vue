@@ -1,7 +1,7 @@
 <template>
     <div class="customer-view" v-if="customer">
         <div class="user-img">
-            <img src="https://www.scottsdaleazestateplanning.com/wp-content/uploads/2018/01/user.png" alt="">
+
         </div>
         <div class="user-info">
             <table class="table">

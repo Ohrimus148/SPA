@@ -1,6 +1,7 @@
 <template>
     <div>
-        <div class="btn-wrapper">
+        <div class="btn-wrapper row justify-content-between">
+            <router-link to="/customers/csv" class="btn btn-success btn-sm">Upload File</router-link>
             <router-link to="/customers/new" class="btn btn-primary btn-sm">New</router-link>
         </div>
         <table class="table">
@@ -37,9 +38,9 @@
     export default {
         name: 'list',
         mounted() {
-            if (this.customers.length) {
-                return;
-            }
+            // if (this.customers.length) {
+            //     return;
+            // }
             this.$store.dispatch('getCustomers');
         },
         computed: {

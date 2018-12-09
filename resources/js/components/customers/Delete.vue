@@ -19,11 +19,10 @@
                 </tr>
             </table>
             <router-link to="/customers">Back to all customers</router-link>
-            <button @click = "deleteClient" to="/customers" class="btn btn-danger">Cancel</button>
+            <button @click = "deleteClient" to="/customers" class="btn btn-danger pull-right">Delete Customer</button>
         </div>
     </div>
 </template>
-
 <script>
     export default {
         name: 'delete',
@@ -52,16 +51,12 @@
         },
         methods: {
             deleteClient: function () {
-                console.log(uri);
                 let uri ='http://client.test/api/clients/'+ this.$route.params.id;
                 axios.delete(uri, this.customer).then((response) => {
                     this.$router.push('/customers');
                 })
             }
         },
-        mounted() {
-            console.log('delete');
-        }
     }
 </script>
 

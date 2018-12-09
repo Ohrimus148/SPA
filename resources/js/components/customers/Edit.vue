@@ -15,7 +15,19 @@
                         <input type="email" class="form-control" v-model="customer.email" placeholder="Customer Email"/>
                     </td>
                 </tr>
-
+                <tr>
+                    <h3 align="center">Contacts</h3>
+                </tr>
+                <tr >
+                    <th>Postcode</th>
+                    <th>Address</th>
+                    <th>Delete</th>
+                </tr>
+                <tr v-for = "contact in customer.contacts" >
+                    <td><input type="text" v-model="contact.postcode"/></td>
+                    <td><input type="text" v-model="contact.address"/></td>
+                    <td><input type="checkbox"  @click ="checkBox(contact.id, $event)" :value = "contact.id"></td>
+                </tr>
                 <tr>
                     <td>
                         <router-link to="/customers" class="btn">Cancel</router-link>
@@ -46,23 +58,26 @@
                 customer: {
                     first_name: '',
                     email: '',
+                    contact: []
                 },
-                errors: null
+                contacts:[],
+                errors: null,
+                checked: [],
             };
         },
         created: function(){
             let uri = 'http://client.test/api/clients/' + this.$route.params.id+'/edit';
             axios.get(uri).then((response) => {
-                this.customer = response.data;
+                this.customer = response.data[0];
             });
         },
         computed: {
             currentUser() {
                 return this.$store.getters.currentUser;
-            }
+            },
         },
         methods: {
-            updateClient() {
+            updateClient(value, event) {
                 this.errors = null;
                 const constraints = this.getConstraints();
                 const errors = validate(this.$data.customer, constraints);
@@ -70,11 +85,25 @@
                     this.errors = errors;
                     return;
                 }
+                //Update
                 let uri ='http://client.test/api/clients/'+ this.$route.params.id;
                 axios.patch(uri, this.customer)
                     .then((response) => {
                         this.$router.push('/customers');
                     });
+                //Delete
+                if(this.checked.length > 0) {
+                    let uri = 'http://client.test/api/contacts/' + this.checked;
+                    axios.delete(uri)
+                        .then((response) => {
+                            this.$router.push('/customers');
+                        });
+                }
+            },
+            checkBox(value, event){
+                var checked = [];
+                checked = event.target.value;
+                this.checked.push(checked);
             },
             getConstraints() {
                 return {
@@ -91,9 +120,6 @@
                     },
                 };
             }
-        },
-        mounted() {
-            console.log('edit');
         }
     }
 </script>

@@ -1,7 +1,7 @@
 <template>
     <div class="customer-view" v-if="customer">
         <div class="user-img">
-
+            <img src="https://www.scottsdaleazestateplanning.com/wp-content/uploads/2018/01/user.png" alt="">
         </div>
         <div class="user-info">
             <table class="table">
@@ -17,6 +17,25 @@
                     <th>Email</th>
                     <td>{{ customer.email }}</td>
                 </tr>
+
+                <tr>
+                    <h3>Contacts</h3>
+                </tr>
+                <template v-if="!customer.contacts.length" >
+                    <tr>
+                        <td colspan="4" class="text-center"><h3>No Contacts Available</h3></td>
+                    </tr>
+                </template>
+                <template v-else >
+                <tr>
+                    <th>Postcode</th>
+                    <th>Address</th>
+                </tr>
+                <tr v-for="contact in customer.contacts" >
+                    <td>{{contact.address}}</td>
+                    <td>{{contact.postcode}}</td>
+                </tr>
+                </template>
             </table>
             <router-link to="/customers">Back to all customers</router-link>
         </div>
@@ -26,21 +45,24 @@
 <script>
     export default {
         name: 'view',
-        created() {
+        data() {
+            return {
+                customer: {},
+                contacts: []
+
+            };
+        },
+        created () {
             if (this.customers.length) {
                 this.customer = this.customers.find((customer) => customer.id == this.$route.params.id);
             } else {
-                axios.get(`/api/customers/${this.$route.params.id}`)
+                axios.get('http://client.test/api/clients/' + this.$route.params.id)
                     .then((response) => {
-                        this.customer = response.data.customer
+                        this.customer = response.data.customer;
                     });
             }
         },
-        data() {
-            return {
-                customer: null
-            };
-        },
+
         computed: {
             currentUser() {
                 return this.$store.getters.currentUser;

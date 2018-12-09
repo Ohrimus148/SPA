@@ -11,9 +11,9 @@
                         <li>
                             <router-link to="/login" class="nav-link">Login</router-link>
                         </li>
-                        <li>
-                            <router-link to="/register" class="nav-link">Register</router-link>
-                        </li>
+                        <!--<li>-->
+                            <!--<router-link to="/register" class="nav-link">Register</router-link>-->
+                        <!--</li>-->
                     </template>
                     <template v-else>
                         <li>

@@ -21,7 +21,7 @@
                     <a href="#" class="btn btn-primary" @click="parseCSV()" >Parse CSV</a>
                     <!--</div>-->
                     <!--<div class="col-sm-offset-3 col-sm-9">-->
-                    <a href="#" class="btn btn-success" @click="saveCustomers()" >Save Customers</a>
+                    <a href="#" class="btn btn-primary" @click="saveCustomers()" v-show = "csv">Save Customers</a>
                 </div>
                 <table class="table" v-if="parse_csv">
                     <thead>
@@ -56,15 +56,17 @@
                 channel_name: '',
                 channel_fields: [],
                 channel_entries: [],
-                parse_header: [],
+                parse_header: ['Name', 'Email'],
                 parse_csv: [],
                 sortOrders:{},
                 sortKey: '',
                 state: '',
                 customers: [],
+                customer: [],
                 first_name: [],
                 email: [],
                 errors: null,
+                csv: false,
             };
         },
         filters: {
@@ -85,27 +87,29 @@
                 var headers = lines[0].split(",");
                 var first_name = [];
                 var email = [];
+                var customers = [];
                 vm.parse_header = lines[0].split(",");
                 lines[0].split(",").forEach(function (key) {
                     vm.sortOrders[key] = 1;
                 });
                 lines.map(function(line, indexLine){
-                    if (indexLine < 1) return; // Jump header line
+                   // if (indexLine < 1) return; // Jump header line
                     var obj = {};
+                    var customer = {};
                     var currentline = line.split(",");
                     headers.map(function(header, indexHeader) {
                         obj[header] = currentline[indexHeader];
                         if(indexHeader == 0) {
-                            first_name.push(currentline[indexHeader]);
+                            customer.first_name = currentline[indexHeader];
                         }
                         else if(indexHeader == 1){
-                            email.push(currentline[indexHeader]);
+                            customer.email = currentline[indexHeader];
                         }
                     });
+                    customers.push(customer);
                     result.push(obj);
                 });
-                this.first_name = first_name;
-                this.email = email;
+                this.customers = customers;
                 result.pop(); // remove the last item because undefined values
                 return result // JavaScript object
             },
@@ -115,6 +119,7 @@
             parseCSV: function() {
                 var state = this.state;
                 var vm = this;
+                this.csv = true;
                 if (window.FileReader) {
                     var reader = new FileReader();
                     reader.readAsText(state.target.files[0]);
@@ -135,10 +140,10 @@
             },
             saveCustomers: function(){
                 var token = axios.defaults.headers.common["Authorization"];
-                axios.post('http://client.test/api/clients/csv', {first_name: this.first_name, email: this.email},
+                axios.post('http://client.test/api/clients/csv',{ customers: this.customers},
                     { Authorization: token }
                 ).then((response) => {
-                    console.log('response', response);
+                    if(response.data.invalid_data.length > 0) this.parse_csv = false;
                 });
             },
             getConstraints() {
@@ -157,9 +162,6 @@
                 };
             }
         },
-        mounted() {
-            console.log('csv');
-        }
     }
 </script>
 
@@ -207,8 +209,4 @@
     tr:nth-child(even) {
         background-color: #dddddd;
     }
-
-
-
-
 </style>

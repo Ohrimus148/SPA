@@ -59,7 +59,6 @@ export default {
         getCustomers(context) {
             axios.get('http://client.test/api/clients')
                 .then((response) => {
-                    console.log(response);
                     context.commit('updateCustomers', response.data);
                 })
         }
